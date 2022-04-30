@@ -4,9 +4,9 @@ line_break_column=72
 auto_continue_multiline=true
 
 [file_prefs]
-final_new_line=true
-ensure_convert_new_lines=false
-strip_trailing_spaces=false
+final_new_line=false
+ensure_convert_new_lines=true
+strip_trailing_spaces=true
 replace_tabs=false
 
 [indentation]
@@ -28,14 +28,10 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=1
-FILE_NAME_0=342;Make;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2FMakefile;0;4
-FILE_NAME_1=37;C;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Fmain.c;0;4
-FILE_NAME_2=301;C++;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Fpeople.h;0;4
-FILE_NAME_3=134;C;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Fpeople.c;0;4
-FILE_NAME_4=0;C;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Ffile.c;0;4
-FILE_NAME_5=50;C++;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Ffile.h;0;4
-FILE_NAME_6=218;None;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2FPeople.geany;0;4
+current_page=2
+FILE_NAME_0=247;C;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Findex.c;0;4
+FILE_NAME_1=0;C++;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Futils.h;0;4
+FILE_NAME_2=0;C;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Futils.c;0;4
 
 [VTE]
 last_dir=/media/francois/Data/Dev/People
