@@ -47,6 +47,6 @@ void index_increment() {
 	fprintf(index_file, "%d", i);
 }
 
-void index_end(void) {
+void index_free(void) {
 	fclose(index_file);
 }

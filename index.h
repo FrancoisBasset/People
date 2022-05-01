@@ -3,5 +3,5 @@
 void index_init(void);
 int index_get(void);
 void index_increment();
-void index_end(void);
+void index_free(void);
 #endif
