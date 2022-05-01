@@ -36,10 +36,18 @@ void index_init(void) {
 }
 
 int index_get(void) {
+	if (index_file == NULL) {
+		index_init();
+	}
+
 	return i;
 }
 
 void index_increment() {
+	if (index_file == NULL) {
+		index_init();
+	}
+
 	i++;
 
 	rewind(index_file);
@@ -48,5 +56,7 @@ void index_increment() {
 }
 
 void index_free(void) {
-	fclose(index_file);
+	if (index_file != NULL) {
+		fclose(index_file);
+	}
 }

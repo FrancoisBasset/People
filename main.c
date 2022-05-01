@@ -10,7 +10,6 @@ void main_free() {
 }
 
 int main(void) {
-	index_init();
 	file_init();
 
 	char *styles[5] = {"Trance", "Psytrance", "Hardstyle", "Hardcore", "Terrorcore"};
