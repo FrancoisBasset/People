@@ -3,10 +3,12 @@
 #ifndef FILE_H
 #define FILE_H
 void file_init(void);
-struct people* file_get_all_people(void);
-struct people file_get_people(int id);
-int file_get_all_people_count(void);
-void file_add_people(struct people p);
-void file_delete_people(int id);
+
+char** file_get_all_lines(void);
+int file_get_all_lines_count(void);
+
+void file_write_people(struct people p);
+void file_write_peoples(struct people *peoples, int people_count);
+
 void file_free(void);
 #endif

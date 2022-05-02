@@ -6,9 +6,7 @@
 #include "people.h"
 
 FILE *people_file = NULL;
-struct people *peoples = NULL;
-int people_count = 0;
-int people_max_count = 0;
+int lines_count = 0;
 
 void file_init(void) {
 	char *folder_name = utils_get_people_folder_name();
@@ -27,109 +25,75 @@ void file_init(void) {
 	free(people_file_name);
 }
 
-struct people* file_get_all_people(void) {
-	if (peoples != NULL) {
-		return peoples;
+char **file_get_all_lines(void) {
+	if (people_file == NULL) {
+		file_init();
 	}
 
 	rewind(people_file);
 
-	int count = 0;
 	while (!feof(people_file)) {
 		if (fgetc(people_file) == '\n') {
-			count++;
+			lines_count++;
 		}
 	}
 
-	people_max_count = count * 2;
-	peoples = malloc(sizeof(struct people) * people_max_count);
-
-	int id = 0;
-	char *firstname = malloc(sizeof(char) * 50);
-	char *lastname = malloc(sizeof(char) * 50);
-	char *style = malloc(sizeof(char) * 50);
+	char **lines = malloc(sizeof(char*) * lines_count);
+	char *line = malloc(sizeof(char) * 100);
 
 	rewind(people_file);
-	while (fscanf(people_file, "%d:::%50[^:::]:::%50[^:::]:::%50s\n", &id, firstname, lastname, style) != EOF) {
-		struct people p = {};
-		p.id = id;
-		p.firstname = malloc(sizeof(char) * (strlen(firstname) + 1));
-		strcpy(p.firstname , firstname);
 
-		p.lastname = malloc(sizeof(char) * (strlen(lastname) + 1));
-		strcpy(p.lastname , lastname);
+	int i = 0;
+	while (fscanf(people_file, "%100[^\n]\n", line) != EOF) {
+		lines[i] = malloc(sizeof(char) * (strlen(line) + 10));
+		strcpy(lines[i], line);
 
-		p.style = malloc(sizeof(char) * (strlen(style) + 1));
-		strcpy(p.style , style);
-
-		peoples[people_count] = p;
-
-		people_count++;
+		i++;
 	}
 
-	free(firstname);
-	free(lastname);
-	free(style);
+	free(line);
 
-	return peoples;
+	return lines;
 }
 
-struct people file_get_people(int id) {
-	for (int i = 0; i < people_count; i++) {
-		if (peoples[i].id == id) {
-			return peoples[i];
-		}
+int file_get_all_lines_count(void) {
+	if (people_file == NULL) {
+		file_init();
 	}
 
-	return (struct people) {};
+	return lines_count;
 }
 
-int file_get_all_people_count(void) {
-	return people_count;
-}
+void file_write_people(struct people p) {
+	if (people_file == NULL) {
+		file_init();
+	}
 
-void file_add_people(struct people p) {
 	fseek(people_file, 0, SEEK_END);
 	index_increment();
 	fprintf(people_file, "%d:::%s:::%s:::%s\n", index_get(), p.firstname, p.lastname, p.style);
 }
 
-void file_delete_people(int id) {
-	int item_removed = 0;
-	int j = -1;
+void file_write_peoples(struct people *peoples, int people_count) {
+	if (people_file == NULL) {
+		file_init();
+	}
+
+	lines_count = people_count;
+
+	fclose(people_file);
+	char *people_file_name = utils_get_people_file_name();
+	people_file = fopen(people_file_name, "w");
+
 	for (int i = 0; i < people_count; i++) {
-		if (peoples[i].id == id) {
-			free(peoples[i].firstname);
-			free(peoples[i].lastname);
-			free(peoples[i].style);
-
-			j = i + 1;
-
-			item_removed = 1;
-		}
-
-		if (j != -1) {
-			peoples[i] = peoples[j];
-
-			j++;
-		}
+		fprintf(people_file, "%d:::%s:::%s:::%s\n", peoples[i].id, peoples[i].firstname, peoples[i].lastname, peoples[i].style);
 	}
 
-	if (item_removed) {
-		people_count--;
-
-		fclose(people_file);
-		char *people_file_name = utils_get_people_file_name();
-		people_file = fopen(people_file_name, "w");
-
-		for (int i = 0; i < people_count; i++) {
-			fprintf(people_file, "%d:::%s:::%s:::%s\n", peoples[i].id, peoples[i].firstname, peoples[i].lastname, peoples[i].style);
-		}
-
-		free(people_file_name);
-	}
+	free(people_file_name);
 }
 
 void file_free(void) {
-	fclose(people_file);
+	if (people_file != NULL) {
+		fclose(people_file);
+	}
 }

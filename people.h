@@ -7,10 +7,17 @@ struct people {
 	char *style;
 };
 
+void people_init(void);
+
 void people_print(struct people p);
+void people_print_full(struct people p);
+int people_get_all_count(void);
+
 struct people* people_get_all(void);
 struct people people_get(int id);
+
 void people_add(struct people p);
 void people_delete(int id);
-void people_free(struct people p);
+
+void people_free();
 #endif
