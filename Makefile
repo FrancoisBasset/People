@@ -1,5 +1,5 @@
 main: build libpeople.a main.o menu.o
-	gcc -g -Werror build/main.o build/menu.o build/libpeople.a -o build/main
+	gcc -g -Werror build/main.o build/menu.o build/libpeople.a -o build/people
 
 main.o: build main.c
 	gcc -g -Werror -c main.c -o build/main.o
@@ -32,4 +32,4 @@ check:
 	cppcheck --language=c --enable=all --template=gcc --suppress=missingIncludeSystem .
 
 vg:
-	valgrind build/main
+	valgrind build/people

@@ -28,13 +28,9 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=2
-FILE_NAME_0=145;C++;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Fmenu.h;0;4
-FILE_NAME_1=343;Make;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2FMakefile;0;4
-FILE_NAME_2=351;C;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Fmenu.c;0;4
-FILE_NAME_3=199;C;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Fmain.c;0;4
-FILE_NAME_4=0;C++;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Fpeople.h;0;4
-FILE_NAME_5=1789;C;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Fpeople.c;0;4
+current_page=1
+FILE_NAME_0=199;Make;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2FMakefile;0;4
+FILE_NAME_1=0;C;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Fmenu.c;0;4
 
 [VTE]
 last_dir=/media/francois/Data/Dev/People
@@ -50,7 +46,7 @@ NF_02_LB=
 NF_02_CM=
 NF_02_WD=
 EX_00_LB=_Execute
-EX_00_CM=make -s clean && make > /dev/null 2>&1 && build/main
+EX_00_CM=make -s clean && make > /dev/null 2>&1 && build/people
 EX_00_WD=
 CFT_00_LB=Lint
 CFT_00_CM=cppcheck --language=c --enable=all --template=gcc --suppress=missingIncludeSystem .
