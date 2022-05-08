@@ -1,0 +1,10 @@
+Package: people
+Version: 1.0.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Depends:
+Maintainer: François Basset <mrfrancoisbasset@gmail.com>
+Description: People command line
+Homepage:
+

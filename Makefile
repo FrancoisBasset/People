@@ -26,10 +26,16 @@ build:
 	mkdir build
 
 clean:
-	rm -r build
+	rm -rf build
+	rm -rf package/usr/bin/people
+	rm -rf people.deb
 
 check:
 	cppcheck --language=c --enable=all --template=gcc --suppress=missingIncludeSystem .
 
 vg:
 	valgrind build/people
+
+pkg: main
+	cp build/people package/usr/bin/people
+	dpkg-deb --build ./package people.deb

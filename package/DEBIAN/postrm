@@ -1,0 +1,8 @@
+#!/bin/bash
+
+for f in /home/*; do
+        folder="$f/.people"
+        rm -rf $folder
+done
+
+rm -rf /root/.people
