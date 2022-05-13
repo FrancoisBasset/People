@@ -1,129 +1,156 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <curses.h>
+#include <menu.h>
 #include "menu.h"
 #include "people.h"
 #include "index.h"
 #include "file.h"
 
-static char green[11] = "\033[0;32m";
-static char yellow[11] = "\033[0;33m";
-static char red[11] = "\033[0;31m";
-static char blue[11] = "\033[0;34m";
-static char end[8] = "\033[0m";
+static MENU *menu;
+static ITEM **actions;
 
 void menu_main(void) {
-	char input;
-	system("clear");
+	initscr();
+	keypad(stdscr, TRUE);
 
-	do {
-		printf("%s1%s %sLister les personnes%s\n", green, end, yellow, end);
-		printf("%s2%s %sVoir le détail d'une personne%s\n", green, end, yellow, end);
-		printf("%s3%s %sAjouter une personne%s\n", green, end, yellow, end);
-		printf("%s4%s %sSupprimer une personne%s\n", green, end, yellow, end);
-		printf("%sq%s %sQuitter%s\n", green, end, yellow, end);
+	actions = malloc(sizeof(ITEM*) * 6);
+	actions[0] = new_item("Lister les personnes", "");
+	actions[1] = new_item("Voir le detail d'une personne", "");
+	actions[2] = new_item("Ajouter une personne", "");
+	actions[3] = new_item("Supprimer une personne", "");
+	actions[4] = new_item("Quitter", "");
 
-		printf("%s", blue);
-		input = 0;
-		scanf(" %c", &input);
-		printf("%s", end);
+	menu = new_menu((ITEM**) actions);
 
-		switch (input) {
-			case '1':
-				menu_list();
+	post_menu(menu);
+	refresh();
+
+	ITEM *current;
+	int c;
+	while(c = getch()) {
+		switch(c) {
+			case KEY_DOWN:
+		        menu_driver(menu, REQ_DOWN_ITEM);
 				break;
-			case '2':
-				menu_show();
+			case KEY_UP:
+				menu_driver(menu, REQ_UP_ITEM);
 				break;
-			case '3':
-				menu_add();
-				break;
-			case '4':
-				menu_delete();
-				break;
-			case 'q':
-				break;
-			default:
-				printf("\033[0;31mCe n'est pas un choix correct !\033[0m\n\n");
+			case '\n':
+				current = current_item(menu);
+				int current_index = item_index(current);
+
+				switch (current_index) {
+					case 0:
+						menu_list();
+						break;
+					case 1:
+						menu_show();
+						break;
+					case 2:
+						menu_add();
+						break;
+					case 3:
+						menu_delete();
+						break;
+					case 4:
+						endwin();
+						return;
+						break;
+				}
 				break;
 		}
-
-		if (input == 'q') {
-			system("clear");
-			break;
-		}
-
-		scanf("%1c[^\n]", &input);
-		system("clear");
-	} while (input != 'q');
+	}
 }
 
 static void menu_list(void) {
+	move(6, 0);
+	clrtobot();
+
 	struct people *peoples = people_get_all();
 	int people_count = people_get_all_count();
 
-	printf("\n");
-
 	if (people_count == 0) {
-		printf("\033[0;31mIl n'y a pas de personnes !\033[0m\n");
+		mvprintw(6, 0, "Il n'y a pas de personnes !");
 	}
 
 	for (int i = 0; i < people_count; i++) {
-		people_print(peoples[i]);
+		mvprintw(6 + i, 0, "%d, %s %s, %s\n", peoples[i].id, peoples[i].firstname, peoples[i].lastname, peoples[i].style);
 	}
-
-	printf("\n");
 }
 
 static void menu_show(void) {
-	printf("\n%sID ? ", blue);
+	move(6, 0);
+	clrtobot();
+
+	mvprintw(6, 0, "ID ? ");
 	int id;
-	scanf("%d", &id);
-	printf("%s\n", end);
+	scanw("%d", &id);
 
 	struct people p = people_get(id);
 	if (p.id != 0) {
-		people_print_full(p);
+		mvprintw(8, 0, "ID : %d", p.id);
+		mvprintw(9, 0, "Firstname : %s", p.firstname);
+		mvprintw(10, 0, "Lastname : %s", p.lastname);
+		mvprintw(11, 0, "Style : %s", p.style);
 	} else {
-		printf("%sCette personne n'existe pas !%s\n", red, end);
+		mvprintw(6, 0, "Cette personne n'existe pas !");
 	}
-
-	printf("\n");
 }
 
 static void menu_add(void) {
+	move(6, 0);
+	clrtobot();
+
 	struct people p = {0};
 
-	printf("\n%s", blue);
-
-	printf("Prénom ? ");
+	mvprintw(6, 0, "Prénom ? ");
 	p.firstname = malloc(sizeof(char) * 50);
-	scanf("%49s", p.firstname);
+	scanw("%49s", p.firstname);
 
-	printf("Nom ? ");
+	mvprintw(7, 0, "Nom ? ");
 	p.lastname = malloc(sizeof(char) * 50);
-	scanf("%49s", p.lastname);
+	scanw("%49s", p.lastname);
 
-	printf("Style ? ");
+	mvprintw(8, 0, "Style ? ");
 	p.style = malloc(sizeof(char) * 50);
-	scanf("%49s", p.style);
+	scanw("%49s", p.style);
 
 	people_add(p);
 
-	printf("%s✓%s\n\n", green, end);
+	mvprintw(9, 0, "Personne ajoutée !");
 }
 
 static void menu_delete(void) {
-	printf("\n%sID ? ", blue);
+	move(6, 0);
+	clrtobot();
+
+	mvprintw(6, 0, "ID ? ");
 
 	int id;
-	scanf("%d", &id);
+	scanw("%d", &id);
 
-	people_delete(id);
+	struct people p = people_get(id);
 
-	printf("%s%s✓%s\n\n", end, green, end);
+	if (p.id != 0) {
+		people_delete(id);
+		mvprintw(7, 0, "Personne %d supprimé !", id);
+	} else {
+		mvprintw(7, 0, "Cette personne n'existe pas !");
+	}
 }
 
 void menu_free(void) {
+	free_item(actions[0]);
+	free_item(actions[1]);
+	free_item(actions[2]);
+	free_item(actions[3]);
+	free_item(actions[4]);
+	free_menu(menu);
+
+	endwin();
+
 	file_free();
 	index_free();
 	people_free();

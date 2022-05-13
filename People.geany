@@ -29,7 +29,9 @@ long_line_column=72
 
 [files]
 current_page=0
-FILE_NAME_0=57;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Fpackage%2FDEBIAN%2Fpostrm;0;4
+FILE_NAME_0=2805;C;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Fmenu.c;0;4
+FILE_NAME_1=338;C;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Fpeople.c;0;4
+FILE_NAME_2=0;C;0;EUTF-8;1;1;0;%2Fmedia%2Ffrancois%2FData%2FDev%2FPeople%2Fmain.c;0;4
 
 [VTE]
 last_dir=/media/francois/Data/Dev/People
