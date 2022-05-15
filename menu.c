@@ -1,47 +1,87 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <curses.h>
-#include <menu.h>
+#include <ncurses.h>
 #include "menu.h"
 #include "people.h"
 #include "index.h"
 #include "file.h"
 
-static MENU *menu;
-static ITEM **actions;
+#define GREEN COLOR_PAIR(1)
+#define RED COLOR_PAIR(2)
+#define BLUE COLOR_PAIR(3)
 
 void menu_main(void) {
 	initscr();
 	keypad(stdscr, TRUE);
+	noecho();
+	curs_set(0);
+	start_color();
+	init_pair(1, COLOR_WHITE, COLOR_GREEN);
+	init_pair(2, COLOR_WHITE, COLOR_RED);
+	init_pair(3, COLOR_BLUE, COLOR_BLUE);
 
-	actions = malloc(sizeof(ITEM*) * 6);
-	actions[0] = new_item("Lister les personnes", "");
-	actions[1] = new_item("Voir le detail d'une personne", "");
-	actions[2] = new_item("Ajouter une personne", "");
-	actions[3] = new_item("Supprimer une personne", "");
-	actions[4] = new_item("Quitter", "");
+	int index = 0;
+	char *items[5] = { "Lister les personnes         ", "Voir le detail d'une personne", "Ajouter une personne         ", "Supprimer une personne       ", "Quitter                      " };
 
-	menu = new_menu((ITEM**) actions);
+	attron(BLUE);
+	mvprintw(0, 0, "                                 ");
+	mvprintw(1, 0, "  ");
+	mvprintw(1, 31, "  ");
+	mvprintw(2, 0, "  ");
+	mvprintw(2, 31, "  ");
+	mvprintw(3, 0, "  ");
+	mvprintw(3, 31, "  ");
+	mvprintw(4, 0, "  ");
+	mvprintw(4, 31, "  ");
+	mvprintw(5, 0, "  ");
+	mvprintw(5, 31, "  ");
+	mvprintw(6, 0, "                                 ");
+	attroff(BLUE);
 
-	post_menu(menu);
-	refresh();
+	attron(GREEN);
+	mvprintw(1, 2, "%s", items[0]);
+	attroff(GREEN);
+	mvprintw(2, 2, "%s", items[1]);
+	mvprintw(3, 2, "%s", items[2]);
+	mvprintw(4, 2, "%s", items[3]);
+	mvprintw(5, 2, "%s", items[4]);
 
-	ITEM *current;
+	move(index, 0);
+
 	int c;
-	while(c = getch()) {
+	while (c = getch()) {
 		switch(c) {
 			case KEY_DOWN:
-		        menu_driver(menu, REQ_DOWN_ITEM);
+				if (index < 4) {
+					mvprintw(index + 1, 2, items[index]);
+					index++;
+					attron(GREEN);
+					mvprintw(index + 1, 2, "%s", items[index]);
+					attroff(GREEN);
+					move(index + 1, 0);
+				}
 				break;
 			case KEY_UP:
-				menu_driver(menu, REQ_UP_ITEM);
+				if (index > 0) {
+					mvprintw(index + 1, 2, items[index]);
+					index--;
+					attron(GREEN);
+					mvprintw(index + 1, 2, "%s", items[index]);
+					attroff(GREEN);
+					move(index + 1, 0);
+				}
 				break;
 			case '\n':
-				current = current_item(menu);
-				int current_index = item_index(current);
+				move(8, 0);
+				clrtobot();
+				attron(RED);
+				mvprintw(index + 1, 2, "%s", items[index]);
+				attroff(RED);
+				keypad(stdscr, FALSE);
+				echo();
 
-				switch (current_index) {
+				switch (index) {
 					case 0:
 						menu_list();
 						break;
@@ -59,74 +99,69 @@ void menu_main(void) {
 						return;
 						break;
 				}
+
+				noecho();
+				keypad(stdscr, TRUE);
+				attron(GREEN);
+				mvprintw(index + 1, 2, "%s", items[index]);
+				attroff(GREEN);
+
 				break;
 		}
 	}
 }
 
 static void menu_list(void) {
-	move(6, 0);
-	clrtobot();
-
 	struct people *peoples = people_get_all();
 	int people_count = people_get_all_count();
 
 	if (people_count == 0) {
-		mvprintw(6, 0, "Il n'y a pas de personnes !");
+		mvprintw(8, 0, "Il n'y a pas de personnes !");
 	}
 
 	for (int i = 0; i < people_count; i++) {
-		mvprintw(6 + i, 0, "%d, %s %s, %s\n", peoples[i].id, peoples[i].firstname, peoples[i].lastname, peoples[i].style);
+		mvprintw(8 + i, 0, "%d, %s %s, %s\n", peoples[i].id, peoples[i].firstname, peoples[i].lastname, peoples[i].style);
 	}
 }
 
 static void menu_show(void) {
-	move(6, 0);
-	clrtobot();
-
-	mvprintw(6, 0, "ID ? ");
+	mvprintw(8, 0, "ID ? ");
 	int id;
 	scanw("%d", &id);
 
 	struct people p = people_get(id);
 	if (p.id != 0) {
-		mvprintw(8, 0, "ID : %d", p.id);
-		mvprintw(9, 0, "Firstname : %s", p.firstname);
-		mvprintw(10, 0, "Lastname : %s", p.lastname);
-		mvprintw(11, 0, "Style : %s", p.style);
+		mvprintw(10, 0, "ID : %d", p.id);
+		mvprintw(11, 0, "Firstname : %s", p.firstname);
+		mvprintw(12, 0, "Lastname : %s", p.lastname);
+		mvprintw(13, 0, "Style : %s", p.style);
 	} else {
-		mvprintw(6, 0, "Cette personne n'existe pas !");
+		mvprintw(10, 0, "Cette personne n'existe pas !");
 	}
 }
 
 static void menu_add(void) {
-	move(6, 0);
-	clrtobot();
-
 	struct people p = {0};
 
-	mvprintw(6, 0, "Prénom ? ");
+	mvprintw(8, 0, "Prénom ? ");
 	p.firstname = malloc(sizeof(char) * 50);
 	scanw("%49s", p.firstname);
 
-	mvprintw(7, 0, "Nom ? ");
+	mvprintw(9, 0, "Nom ? ");
 	p.lastname = malloc(sizeof(char) * 50);
 	scanw("%49s", p.lastname);
 
-	mvprintw(8, 0, "Style ? ");
+	mvprintw(10, 0, "Style ? ");
 	p.style = malloc(sizeof(char) * 50);
 	scanw("%49s", p.style);
 
 	people_add(p);
 
-	mvprintw(9, 0, "Personne ajoutée !");
+	mvprintw(11, 0, "Personne ajoutée !");
 }
 
 static void menu_delete(void) {
-	move(6, 0);
-	clrtobot();
-
-	mvprintw(6, 0, "ID ? ");
+	mvprintw(8, 0, "ID ? ");
 
 	int id;
 	scanw("%d", &id);
@@ -135,20 +170,13 @@ static void menu_delete(void) {
 
 	if (p.id != 0) {
 		people_delete(id);
-		mvprintw(7, 0, "Personne %d supprimé !", id);
+		mvprintw(8, 0, "Personne %d supprimé !", id);
 	} else {
-		mvprintw(7, 0, "Cette personne n'existe pas !");
+		mvprintw(8, 0, "Cette personne n'existe pas !");
 	}
 }
 
 void menu_free(void) {
-	free_item(actions[0]);
-	free_item(actions[1]);
-	free_item(actions[2]);
-	free_item(actions[3]);
-	free_item(actions[4]);
-	free_menu(menu);
-
 	endwin();
 
 	file_free();
