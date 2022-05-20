@@ -11,72 +11,81 @@
 #define RED COLOR_PAIR(2)
 #define BLUE COLOR_PAIR(3)
 
+int max_v = 0;
+int max_h = 0;
+int begin_h = 0;
+int begin_v = 0;
+
 void menu_main(void) {
 	initscr();
 	keypad(stdscr, TRUE);
 	noecho();
 	curs_set(0);
 	start_color();
-	init_pair(1, COLOR_WHITE, COLOR_GREEN);
+	init_pair(1, COLOR_MAGENTA, COLOR_GREEN);
 	init_pair(2, COLOR_WHITE, COLOR_RED);
 	init_pair(3, COLOR_BLUE, COLOR_BLUE);
+
+	getmaxyx(stdscr, max_v, max_h);
+	begin_h = (max_h - 33) / 2;
+	begin_v = (max_v - 8) / 2;
 
 	int index = 0;
 	char *items[5] = { "Lister les personnes         ", "Voir le detail d'une personne", "Ajouter une personne         ", "Supprimer une personne       ", "Quitter                      " };
 
 	attron(BLUE);
-	mvprintw(0, 0, "                                 ");
-	mvprintw(1, 0, "  ");
-	mvprintw(1, 31, "  ");
-	mvprintw(2, 0, "  ");
-	mvprintw(2, 31, "  ");
-	mvprintw(3, 0, "  ");
-	mvprintw(3, 31, "  ");
-	mvprintw(4, 0, "  ");
-	mvprintw(4, 31, "  ");
-	mvprintw(5, 0, "  ");
-	mvprintw(5, 31, "  ");
-	mvprintw(6, 0, "                                 ");
+	mvprintw(begin_v, begin_h, "                                 ");
+	mvprintw(begin_v + 1, begin_h, "  ");
+	mvprintw(begin_v + 1, begin_h + 31, "  ");
+	mvprintw(begin_v + 2, begin_h, "  ");
+	mvprintw(begin_v + 2, begin_h + 31, "  ");
+	mvprintw(begin_v + 3, begin_h, "  ");
+	mvprintw(begin_v + 3, begin_h + 31, "  ");
+	mvprintw(begin_v + 4, begin_h, "  ");
+	mvprintw(begin_v + 4, begin_h + 31, "  ");
+	mvprintw(begin_v + 5, begin_h, "  ");
+	mvprintw(begin_v + 5, begin_h + 31, "  ");
+	mvprintw(begin_v + 6, begin_h, "                                 ");
 	attroff(BLUE);
 
 	attron(GREEN);
-	mvprintw(1, 2, "%s", items[0]);
+	mvprintw(begin_v + 1, begin_h + 2, "%s", items[0]);
 	attroff(GREEN);
-	mvprintw(2, 2, "%s", items[1]);
-	mvprintw(3, 2, "%s", items[2]);
-	mvprintw(4, 2, "%s", items[3]);
-	mvprintw(5, 2, "%s", items[4]);
+	mvprintw(begin_v + 2, begin_h + 2, "%s", items[1]);
+	mvprintw(begin_v + 3, begin_h + 2, "%s", items[2]);
+	mvprintw(begin_v + 4, begin_h + 2, "%s", items[3]);
+	mvprintw(begin_v + 5, begin_h + 2, "%s", items[4]);
 
-	move(index, 0);
+	move(begin_v + index, begin_h);
 
 	int c;
 	while (c = getch()) {
 		switch(c) {
 			case KEY_DOWN:
 				if (index < 4) {
-					mvprintw(index + 1, 2, items[index]);
+					mvprintw(begin_v + index + 1, begin_h + 2, items[index]);
 					index++;
 					attron(GREEN);
-					mvprintw(index + 1, 2, "%s", items[index]);
+					mvprintw(begin_v + index + 1, begin_h + 2, "%s", items[index]);
 					attroff(GREEN);
-					move(index + 1, 0);
+					move(begin_v + index + 1, begin_h);
 				}
 				break;
 			case KEY_UP:
 				if (index > 0) {
-					mvprintw(index + 1, 2, items[index]);
+					mvprintw(begin_v + index + 1, begin_h + 2, items[index]);
 					index--;
 					attron(GREEN);
-					mvprintw(index + 1, 2, "%s", items[index]);
+					mvprintw(begin_v + index + 1, begin_h + 2, "%s", items[index]);
 					attroff(GREEN);
-					move(index + 1, 0);
+					move(begin_v + index + 1, begin_h);
 				}
 				break;
 			case '\n':
-				move(8, 0);
+				move(begin_v + 7, begin_h);
 				clrtobot();
 				attron(RED);
-				mvprintw(index + 1, 2, "%s", items[index]);
+				mvprintw(begin_v + index + 1, begin_h + 2, "%s", items[index]);
 				attroff(RED);
 				keypad(stdscr, FALSE);
 				echo();
@@ -103,7 +112,7 @@ void menu_main(void) {
 				noecho();
 				keypad(stdscr, TRUE);
 				attron(GREEN);
-				mvprintw(index + 1, 2, "%s", items[index]);
+				mvprintw(begin_v + index + 1, begin_h + 2, "%s", items[index]);
 				attroff(GREEN);
 
 				break;
@@ -116,52 +125,125 @@ static void menu_list(void) {
 	int people_count = people_get_all_count();
 
 	if (people_count == 0) {
-		mvprintw(8, 0, "Il n'y a pas de personnes !");
-	}
+		mvprintw(begin_v + 8, begin_h, "Il n'y a pas de personnes !");
+	} else {
+		int max_length = 0;
+		for (int i = 0; i < people_count; i++) {
+			char *s = malloc(sizeof(char) * 200);
+			sprintf(s, "%d, %s %s, %s", peoples[i].id, peoples[i].firstname, peoples[i].lastname, peoples[i].style);
 
-	for (int i = 0; i < people_count; i++) {
-		mvprintw(8 + i, 0, "%d, %s %s, %s\n", peoples[i].id, peoples[i].firstname, peoples[i].lastname, peoples[i].style);
+			if (max_length < strlen(s)) {
+				max_length = strlen(s);
+				max_length++;
+			}
+		}
+
+		int h = (max_h - max_length) / 2;
+		int v = (max_v - (begin_v + 8)) / 2;
+		v--;
+
+		attron(BLUE);
+		for (int i = -2; i <= max_length; i++) {
+			mvprintw(begin_v + 8, h + i, "  ");
+			mvprintw(begin_v + 8 + v + 1, h + i, "  ");
+		}
+		for (int i = 0; i <= v; i++) {
+			mvprintw(begin_v + 8 + i, h - 2, "  ");
+			mvprintw(begin_v + 8 + i, h + max_length, "  ");
+		}
+		attroff(BLUE);
+
+		int index = 0;
+		int scroll_index = 0;
+		int c = 0;
+		set_escdelay(0);
+		keypad(stdscr, TRUE);
+		noecho();
+
+		char *blank = calloc(max_length, sizeof(char));
+		memset(blank, ' ', sizeof(char) * max_length);
+
+		do {
+			switch (c) {
+				case KEY_DOWN:
+					if (index < people_count && index + v < people_count) {
+						index++;
+					}
+					break;
+				case KEY_UP:
+					if (index > 0) {
+						index--;
+					}
+					break;
+			}
+
+			for (int i = 0; i < v; i++) {
+				if (index + i < people_count) {
+					mvprintw(begin_v + 9 + i, h, blank);
+					mvprintw(begin_v + 9 + i, h, "%d, %s %s, %s", peoples[index + i].id, peoples[index + i].firstname, peoples[index + i].lastname, peoples[index + i].style);
+				}
+			}
+
+			int last = people_count - v;
+
+			if (index == 0) scroll_index = 0;
+			else if (index == last) scroll_index = v - 1;
+			else {
+				scroll_index = (index / v) + 1;
+				double d = (double) index / (double) v;
+				if (d > 1 / (double) v) {
+					scroll_index++;
+				}
+				if (scroll_index >= v - 1) scroll_index = v - 2;
+			}
+
+			attron(GREEN);
+			if (!(index == 0 && index == last)) {
+				mvprintw(begin_v + 9 + scroll_index, h + max_length - 1, " ");
+			}
+			attroff(GREEN);
+		} while ((c = getch()) != 27);
 	}
 }
 
 static void menu_show(void) {
-	mvprintw(8, 0, "ID ? ");
+	mvprintw(begin_v + 8, begin_h, "ID ? ");
 	int id;
 	scanw("%d", &id);
 
 	struct people p = people_get(id);
 	if (p.id != 0) {
-		mvprintw(10, 0, "ID : %d", p.id);
-		mvprintw(11, 0, "Firstname : %s", p.firstname);
-		mvprintw(12, 0, "Lastname : %s", p.lastname);
-		mvprintw(13, 0, "Style : %s", p.style);
+		mvprintw(begin_v + 10, begin_h, "ID : %d", p.id);
+		mvprintw(begin_v + 11, begin_h, "Firstname : %s", p.firstname);
+		mvprintw(begin_v + 12, begin_h, "Lastname : %s", p.lastname);
+		mvprintw(begin_v + 13, begin_h, "Style : %s", p.style);
 	} else {
-		mvprintw(10, 0, "Cette personne n'existe pas !");
+		mvprintw(begin_v + 10, begin_h, "Cette personne n'existe pas !");
 	}
 }
 
 static void menu_add(void) {
 	struct people p = {0};
 
-	mvprintw(8, 0, "Prénom ? ");
+	mvprintw(begin_v + 8, begin_h, "Prénom ? ");
 	p.firstname = malloc(sizeof(char) * 50);
 	scanw("%49s", p.firstname);
 
-	mvprintw(9, 0, "Nom ? ");
+	mvprintw(begin_v + 9, begin_h, "Nom ? ");
 	p.lastname = malloc(sizeof(char) * 50);
 	scanw("%49s", p.lastname);
 
-	mvprintw(10, 0, "Style ? ");
+	mvprintw(begin_v + 10, begin_h, "Style ? ");
 	p.style = malloc(sizeof(char) * 50);
 	scanw("%49s", p.style);
 
 	people_add(p);
 
-	mvprintw(11, 0, "Personne ajoutée !");
+	mvprintw(begin_v + 11, begin_h, "Personne ajoutée !");
 }
 
 static void menu_delete(void) {
-	mvprintw(8, 0, "ID ? ");
+	mvprintw(begin_v + 8, begin_h, "ID ? ");
 
 	int id;
 	scanw("%d", &id);
@@ -170,9 +252,9 @@ static void menu_delete(void) {
 
 	if (p.id != 0) {
 		people_delete(id);
-		mvprintw(8, 0, "Personne %d supprimé !", id);
+		mvprintw(begin_v + 8, begin_h, "Personne %d supprimé !", id);
 	} else {
-		mvprintw(8, 0, "Cette personne n'existe pas !");
+		mvprintw(begin_v + 8, begin_h, "Cette personne n'existe pas !");
 	}
 }
 
