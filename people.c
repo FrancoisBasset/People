@@ -3,6 +3,7 @@
 #include <string.h>
 #include "people.h"
 #include "file.h"
+#include "index.h"
 
 struct people *peoples = NULL;
 int people_count = -1;
@@ -45,14 +46,6 @@ void people_init(void) {
 	free(firstname);
 	free(lastname);
 	free(style);
-}
-
-void people_print(struct people p) {
-	printf("%d, %s %s, %s\n", p.id, p.firstname, p.lastname, p.style);
-}
-
-void people_print_full(struct people p) {
-	printf("ID : %d\nFirstname : %s\nLastname : %s\nStyle : %s\n", p.id, p.firstname, p.lastname, p.style);
 }
 
 struct people* people_get_all(void) {
@@ -104,7 +97,7 @@ void people_add(struct people p) {
 		peoples = new_peoples;
 	}
 
-	p.id = people_count + 1;
+	p.id = index_get() + 1;
 
 	peoples[people_count] = p;
 	people_count++;
