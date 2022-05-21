@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "people.h"
-#include "file.h"
-#include "index.h"
+#include "headers/people.h"
+#include "headers/file.h"
+#include "headers/index.h"
 
 struct people *peoples = NULL;
 int people_count = -1;

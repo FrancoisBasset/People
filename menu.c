@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ncurses.h>
-#include "menu.h"
-#include "people.h"
-#include "index.h"
-#include "file.h"
+#include "headers/menu.h"
+#include "headers/people.h"
+#include "headers/index.h"
+#include "headers/file.h"
 
 #define GREEN COLOR_PAIR(1)
 #define RED COLOR_PAIR(2)
