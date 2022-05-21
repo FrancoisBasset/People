@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "index.h"
-#include "utils.h"
+#include "headers/index.h"
+#include "headers/utils.h"
 
 FILE *index_file = NULL;
 int i = 0;

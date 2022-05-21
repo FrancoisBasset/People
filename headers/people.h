@@ -9,8 +9,6 @@ struct people {
 
 void people_init(void);
 
-void people_print(struct people p);
-void people_print_full(struct people p);
 int people_get_all_count(void);
 
 struct people* people_get_all(void);

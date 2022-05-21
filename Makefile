@@ -1,5 +1,5 @@
 main: build libpeople.a main.o menu.o
-	gcc -g -Werror build/main.o build/menu.o build/libpeople.a -o build/people
+	gcc -g -Werror build/main.o build/menu.o build/libpeople.a -o build/people -lncurses -lmenu
 
 main.o: build main.c
 	gcc -g -Werror -c main.c -o build/main.o

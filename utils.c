@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "utils.h"
+#include "headers/utils.h"
 
 char *utils_get_username(void) {
 	FILE *output = popen("whoami", "r");
