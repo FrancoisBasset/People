@@ -134,13 +134,16 @@ static void menu_list(void) {
 
 			if (max_length < strlen(s)) {
 				max_length = strlen(s);
-				max_length++;
 			}
 		}
 
 		int h = (max_h - max_length) / 2;
 		int v = (max_v - (begin_v + 8)) / 2;
 		v--;
+
+		if (people_count > v) {
+			max_length++;
+		}
 
 		attron(BLUE);
 		for (int i = -2; i <= max_length; i++) {
@@ -160,7 +163,7 @@ static void menu_list(void) {
 		keypad(stdscr, TRUE);
 		noecho();
 
-		char *blank = calloc(max_length, sizeof(char));
+		char *blank = calloc(max_length + 1, sizeof(char));
 		memset(blank, ' ', sizeof(char) * max_length);
 
 		do {
@@ -198,7 +201,7 @@ static void menu_list(void) {
 			}
 
 			attron(GREEN);
-			if (!(index == 0 && index == last)) {
+			if (last > 0) {
 				mvprintw(begin_v + 9 + scroll_index, h + max_length - 1, " ");
 			}
 			attroff(GREEN);
@@ -208,10 +211,27 @@ static void menu_list(void) {
 
 static void menu_show(void) {
 	mvprintw(begin_v + 8, begin_h, "ID ? ");
-	int id;
-	scanw("%d", &id);
 
-	struct people p = people_get(id);
+	keypad(stdscr, TRUE);
+	set_escdelay(0);
+	char c;
+
+	char *id = calloc(10, sizeof(char));
+	do {
+		noecho();
+		c = getch();
+		echo();
+		if (c >= 48 && c<= 57) {
+			printw("%c", c);
+			char s[2] = { c, '\0' };
+			strcat(id, s);
+		} else if (c == 27) {
+			free(id);
+			return;
+		}
+	} while (c != '\n');
+
+	struct people p = people_get(atoi(id));
 	if (p.id != 0) {
 		mvprintw(begin_v + 10, begin_h, "ID : %d", p.id);
 		mvprintw(begin_v + 11, begin_h, "Firstname : %s", p.firstname);
@@ -225,17 +245,60 @@ static void menu_show(void) {
 static void menu_add(void) {
 	struct people p = {0};
 
+	keypad(stdscr, TRUE);
+	set_escdelay(0);
+	char c;
+
 	mvprintw(begin_v + 8, begin_h, "Prénom ? ");
-	p.firstname = malloc(sizeof(char) * 50);
-	scanw("%49s", p.firstname);
+	p.firstname = calloc(50, sizeof(char));
+	do {
+		noecho();
+		c = getch();
+		echo();
+		if ((c >= 65 && c<= 90) || (c >= 97 && c <= 122) || c == 45) {
+			printw("%c", c);
+			char s[2] = { c, '\0' };
+			strcat(p.firstname, s);
+		} else if (c == 27) {
+			free(p.firstname);
+			return;
+		}
+	} while (c != '\n');
 
 	mvprintw(begin_v + 9, begin_h, "Nom ? ");
-	p.lastname = malloc(sizeof(char) * 50);
-	scanw("%49s", p.lastname);
+	p.lastname = calloc(50, sizeof(char));
+	do {
+		noecho();
+		c = getch();
+		echo();
+		if ((c >= 65 && c<= 90) || (c >= 97 && c <= 122) || c == 45) {
+			printw("%c", c);
+			char s[2] = { c, '\0' };
+			strcat(p.lastname, s);
+		} else if (c == 27) {
+			free(p.firstname);
+			free(p.lastname);
+			return;
+		}
+	} while (c != '\n');
 
 	mvprintw(begin_v + 10, begin_h, "Style ? ");
-	p.style = malloc(sizeof(char) * 50);
-	scanw("%49s", p.style);
+	p.style = calloc(50, sizeof(char));
+	do {
+		noecho();
+		c = getch();
+		echo();
+		if ((c >= 65 && c<= 90) || (c >= 97 && c <= 122) || c == 45) {
+			printw("%c", c);
+			char s[2] = { c, '\0' };
+			strcat(p.style, s);
+		} else if (c == 27) {
+			free(p.firstname);
+			free(p.lastname);
+			free(p.style);
+			return;
+		}
+	} while (c != '\n');
 
 	people_add(p);
 
@@ -245,14 +308,30 @@ static void menu_add(void) {
 static void menu_delete(void) {
 	mvprintw(begin_v + 8, begin_h, "ID ? ");
 
-	int id;
-	scanw("%d", &id);
+	keypad(stdscr, TRUE);
+	set_escdelay(0);
+	char c;
 
-	struct people p = people_get(id);
+	char *id = calloc(10, sizeof(char));
+	do {
+		noecho();
+		c = getch();
+		echo();
+		if (c >= 48 && c<= 57) {
+			printw("%c", c);
+			char s[2] = { c, '\0' };
+			strcat(id, s);
+		} else if (c == 27) {
+			free(id);
+			return;
+		}
+	} while (c != '\n');
+
+	struct people p = people_get(atoi(id));
 
 	if (p.id != 0) {
-		people_delete(id);
-		mvprintw(begin_v + 8, begin_h, "Personne %d supprimé !", id);
+		people_delete(atoi(id));
+		mvprintw(begin_v + 8, begin_h, "Personne %d supprimé !", atoi(id));
 	} else {
 		mvprintw(begin_v + 8, begin_h, "Cette personne n'existe pas !");
 	}
