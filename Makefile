@@ -1,11 +1,11 @@
-main: build libpeople.a main.o menu.o
-	gcc -g -Werror build/main.o build/menu.o build/libpeople.a -o build/people -lncurses -lmenu
+main: build libpeople.a main.o curses.o
+	gcc -g -Werror build/main.o build/curses.o build/libpeople.a -o build/people -lncurses -lmenu
 
 main.o: build main.c
 	gcc -g -Werror -c main.c -o build/main.o
 
-menu.o: build menu.c
-	gcc -g -Werror -c menu.c -o build/menu.o
+curses.o: build curses.c
+	gcc -g -Werror -c curses.c -o build/curses.o
 
 libpeople.a: build file.o index.o people.o utils.o
 	ar -q build/libpeople.a build/file.o build/index.o build/people.o build/utils.o

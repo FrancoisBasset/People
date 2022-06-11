@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "headers/index.h"
-#include "headers/utils.h"
-#include "headers/people.h"
+#include "index.h"
+#include "utils.h"
+#include "people.h"
 
 FILE *people_file = NULL;
 int lines_count = 0;
