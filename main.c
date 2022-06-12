@@ -1,13 +1,12 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <time.h>
-#include "index.h"
-#include "file.h"
-#include "people.h"
 #include "curses.h"
 
-int main(void) {
-	menu_main();
-	menu_free();
+int main(int argc, char **argv) {
+	if (argc == 2 && strcmp(argv[1], "-gui") == 0) {
+		printf("GUI");
+	} else {
+		menu_main();
+		menu_free();
+	}
 }
