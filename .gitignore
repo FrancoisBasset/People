@@ -1,3 +1,4 @@
 /build
 /package/usr/bin/people
 people.deb
+*.swp

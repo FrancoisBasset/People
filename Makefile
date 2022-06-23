@@ -1,8 +1,14 @@
-main: build libpeople.a main.o curses.o
-	gcc -g -Werror build/main.o build/curses.o build/libpeople.a -o build/people -lncurses -lmenu
+main: build libpeople.a main.o curses.o xdef.o launchx.o
+	gcc -g -Werror build/main.o build/curses.o build/xdef.o build/launchx.o build/libpeople.a -o build/people -lncurses -lX11
 
 main.o: build main.c
 	gcc -g -Werror -c main.c -o build/main.o
+
+launchx.o: build launchx.c
+	gcc -g -Werror -c launchx.c -o build/launchx.o
+
+xdef.o: build xdef.c
+	gcc -g -Werror -c xdef.c -o build/xdef.o
 
 curses.o: build curses.c
 	gcc -g -Werror -c curses.c -o build/curses.o
@@ -34,7 +40,7 @@ check:
 	cppcheck --language=c --enable=all --template=gcc --suppress=missingIncludeSystem .
 
 vg:
-	valgrind build/people
+	valgrind build/people -gui
 
 pkg: main
 	cp build/people package/usr/bin/people
