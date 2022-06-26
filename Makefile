@@ -1,11 +1,17 @@
-main: build libpeople.a main.o curses.o xdef.o launchx.o
-	gcc -g -Werror build/main.o build/curses.o build/xdef.o build/launchx.o build/libpeople.a -o build/people -lncurses -lX11
+main: build libpeople.a main.o curses.o xdef.o xmenu.o xadd.o launchx.o
+	gcc -g -Werror build/main.o build/curses.o build/xdef.o build/xmenu.o build/xadd.o build/launchx.o build/libpeople.a -o build/people -lncurses -lX11
 
 main.o: build main.c
 	gcc -g -Werror -c main.c -o build/main.o
 
 launchx.o: build launchx.c
 	gcc -g -Werror -c launchx.c -o build/launchx.o
+
+xadd.o: build xadd.c
+	gcc -g -Werror -c xadd.c -o build/xadd.o
+
+xmenu.o: build xmenu.c
+	gcc -g -Werror -c xmenu.c -o build/xmenu.o
 
 xdef.o: build xdef.c
 	gcc -g -Werror -c xdef.c -o build/xdef.o

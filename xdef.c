@@ -41,8 +41,8 @@ void xdef_init(void) {
 	cursor = XCreateFontCursor(display, XC_hand1);
 
 	XSetWindowAttributes xswa;
-	xswa.cursor = cursor;
-	window = XCreateWindow(display, root_window, 0, 0, max_width, max_height, 0, 24, InputOutput, visual, CWCursor, &xswa);
+	xswa.override_redirect = True;
+	window = XCreateWindow(display, root_window, 0, 0, max_width, max_height, 0, 24, InputOutput, visual, CWOverrideRedirect, &xswa);
 	XSetWindowBackground(display, window, white_pixel);
 
 	Colormap colormap = XCreateColormap(display, root_window, visual, AllocNone);

@@ -4,8 +4,18 @@
 #include <string.h>
 #include "launchx.h"
 #include "xdef.h"
+#include "xmenu.h"
+#include "xadd.h"
 
 char *scr;
+char* hover = NULL;
+char *focus = NULL;
+char *prenom;
+char *nom;
+char *style;
+
+char add_updated = 1;
+int blink_index = -1;
 
 void launchx(void) {
 	xdef_init();
@@ -16,18 +26,30 @@ void launchx(void) {
 	scr = malloc(sizeof(char) * 1);
 	strcpy(scr, "");
 
+	prenom = malloc(sizeof(char) * 100);
+	strcpy(prenom, "Francois");
+	nom = malloc(sizeof(char) * 100);
+	strcpy(nom, "Basset");
+	style = malloc(sizeof(char) * 100);
+	strcpy(style, "Trance");
+
 	int quit = 0;
-	draw_buttons();
+	xmenu_draw_buttons();
 	XEvent event;
+
+	int blink_index = 0;
+
 	while (1) {
-		XNextEvent(display, &event);
+		if (XPending(display)) {
+			XNextEvent(display, &event);
+		}
 
 		switch (event.type) {
 			case Expose:
-				draw_buttons();
+				xmenu_draw_buttons();
 				break;
 			case ButtonPress:
-				quit = handle_buttons_press(event.xbutton.x, event.xbutton.y);
+				quit = handle_press(event.xbutton.x, event.xbutton.y);
 				break;
 			case MotionNotify:
 				handle_motion(event.xmotion.x, event.xmotion.y);
@@ -36,6 +58,10 @@ void launchx(void) {
 
 		if (quit) {
 			break;
+		}
+
+		if (strcmp(scr, "addscreen") == 0) {
+			xadd_handle_refresh();
 		}
 	}
 
@@ -48,50 +74,31 @@ void launchx(void) {
 	XCloseDisplay(display);
 }
 
-void draw_buttons(void) {
-	XFillRectangle(display, window, gc_button, 50, 50, 200, 100);
-	XFillRectangle(display, window, gc_button, 50, 200, 200, 100);
-	XFillRectangle(display, window, gc_button, 50, 350, 200, 100);
-	XFillRectangle(display, window, gc_button, 50, 500, 200, 100);
-	XFillRectangle(display, window, gc_button, 50, 650, 200, 100);
-
-	XDrawString(display, window, gc_white_text, 60, 105, "Lister les personnes", 20);
-	XDrawString(display, window, gc_white_text, 75, 255, "Voir une personne", 17);
-	XDrawString(display, window, gc_white_text, 60, 405, "Ajouter une personne", 20);
-	XDrawString(display, window, gc_white_text, 50, 555, "Supprimer une personne", 22);
-	XDrawString(display, window, gc_white_text, 120, 705, "Quitter", 7);
-
-	XDrawLine(display, window, gc_black_text, 300, 0, 300, max_height);
-	XDrawLine(display, window, gc_black_text, 301, 0, 301, max_height);
-}
-
-int handle_buttons_press(int x, int y) {
-	if (x >= 50 && x <= 250 && y >= 50 && y <= 150) {
-		list_people();
-	} else if (x >= 50 && x <= 250 && y >= 200 && y <= 300) {
-		show_people();
-	} else if (x >= 50 && x <= 250 && y >= 350 && y <= 450) {
-		add_people();
-	} else if (x >= 50 && x <= 250 && y >= 500 && y <= 600) {
-		delete_people();
-	} else if (x >= 50 && x <= 250 && y >= 650 && y <= 750) {
-		return 1;
+int handle_press(int x, int y) {
+	if (strcmp(scr, "addscreen") == 0) {
+		xadd_handle_press(x, y);
 	}
 
-	return 0;
+	return xmenu_handle_press(x, y);
+
+	//int pixel = XTextWidth(font, prenom, strlen(prenom));
+	//XDrawString(display, window, gc_black_text, 805 + pixel, 200, prenom, strlen(prenom));
 }
 
 void handle_motion(int x, int y) {
+	if (hover != NULL) {
+		free(hover);
+		hover = NULL;
+	}
+
 	if (strcmp(scr, "addscreen") == 0) {
-		if (x >= 800 && x <= 1200 && y >= 165 && y <= 215) {
-			XDefineCursor(display, window, input_cursor);
-		} else if (x >= 800 && x <= 1200 && y >= 365 && y <= 415) {
-			XDefineCursor(display, window, input_cursor);
-		} else if (x >= 800 && x <= 1200 && y >= 565 && y <= 615) {
-			XDefineCursor(display, window, input_cursor);
-		} else {
-			XDefineCursor(display, window, cursor);
+		if (xadd_handle_motion(x, y)) {
+			return;
 		}
+	}
+
+	if (xmenu_handle_motion(x, y)) {
+		return;
 	}
 }
 
@@ -104,6 +111,7 @@ void show_people(void) {
 void add_people(void) {
 	if (scr != NULL) {
 		free(scr);
+		scr = NULL;
 	}
 	scr = malloc(sizeof(char) * 10);
 	strcpy(scr, "addscreen");
