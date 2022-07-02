@@ -13,4 +13,7 @@ extern Cursor cursor;
 extern Cursor input_cursor;
 
 extern int max_height;
+
+extern Font font;
+extern Font big_font;
 #endif

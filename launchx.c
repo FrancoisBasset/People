@@ -15,13 +15,14 @@ char *nom;
 char *style;
 
 char add_updated = 1;
-int blink_index = -1;
+int input_text_index = 0;
 
 void launchx(void) {
 	xdef_init();
 
 	XMapWindow(display, window);
-	XSelectInput(display, window, ExposureMask | ButtonPressMask | PointerMotionMask);
+	XSelectInput(display, window, ExposureMask | ButtonPressMask | PointerMotionMask | KeyPressMask);
+	XSetInputFocus(display, window, RevertToNone, CurrentTime);
 
 	scr = malloc(sizeof(char) * 1);
 	strcpy(scr, "");
@@ -37,12 +38,8 @@ void launchx(void) {
 	xmenu_draw_buttons();
 	XEvent event;
 
-	int blink_index = 0;
-
 	while (1) {
-		if (XPending(display)) {
-			XNextEvent(display, &event);
-		}
+		XNextEvent(display, &event);
 
 		switch (event.type) {
 			case Expose:
@@ -53,6 +50,9 @@ void launchx(void) {
 				break;
 			case MotionNotify:
 				handle_motion(event.xmotion.x, event.xmotion.y);
+				break;
+			case KeyPress:
+				xadd_handle_key_press(event.xkey);
 				break;
 		}
 
@@ -80,9 +80,6 @@ int handle_press(int x, int y) {
 	}
 
 	return xmenu_handle_press(x, y);
-
-	//int pixel = XTextWidth(font, prenom, strlen(prenom));
-	//XDrawString(display, window, gc_black_text, 805 + pixel, 200, prenom, strlen(prenom));
 }
 
 void handle_motion(int x, int y) {

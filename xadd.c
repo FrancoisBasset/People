@@ -21,12 +21,17 @@ int xadd_handle_motion(int x, int y) {
 		hover = malloc(sizeof(char) * 6);
 		strcpy(hover, "style");
 		return 1;
+	} else {
+		free(hover);
+		hover = NULL;
 	}
 
 	return 0;
 }
 
 void xadd_handle_press(int x, int y) {
+	add_updated = 1;
+
 	if (hover != NULL) {
 		if (strcmp(hover, "prenom") == 0) {
 			focus = malloc(sizeof(char) * 7);
@@ -38,39 +43,135 @@ void xadd_handle_press(int x, int y) {
 			focus = malloc(sizeof(char) * 6);
 			strcpy(focus, "style");
 		}
+	} else {
+		free(focus);
+		focus = NULL;
 	}
 }
 
 void xadd_handle_refresh(void) {
-	if (add_updated || (focus != NULL && blink_index == 0)) {
-		add_updated = 0;
-		blink_index = 0;
-
-		XClearArea(display, window, 801, 166, 399, 49, 0);
-		XClearArea(display, window, 801, 366, 399, 49, 0);
-		XClearArea(display, window, 801, 566, 399, 49, 0);
-
-		XDrawString(display, window, gc_black_text, 805, 205, prenom, strlen(prenom));
-		XDrawString(display, window, gc_black_text, 805, 405, nom, strlen(nom));
-		XDrawString(display, window, gc_black_text, 805, 605, style, strlen(style));
+	if (!add_updated) {
+		return;
 	}
 
-	if (focus != NULL && blink_index == 50000) {
+	add_updated = 0;
+
+	XClearArea(display, window, 801, 166, 399, 49, 0);
+	XClearArea(display, window, 801, 366, 399, 49, 0);
+	XClearArea(display, window, 801, 566, 399, 49, 0);
+
+	XDrawString(display, window, gc_black_text, 805, 205, prenom, strlen(prenom));
+	XDrawString(display, window, gc_black_text, 805, 405, nom, strlen(nom));
+	XDrawString(display, window, gc_black_text, 805, 605, style, strlen(style));
+
+	if (focus != NULL) {
 		if (strcmp(focus, "prenom") == 0) {
-			XDrawLine(display, window, gc_black_text, 805, 175, 805, 205);
-			XDrawLine(display, window, gc_black_text, 806, 175, 806, 205);
+			int width = XTextWidth(XQueryFont(display, big_font), prenom, input_text_index);
+
+			XDrawLine(display, window, gc_black_text, 805 + width, 175, 805 + width, 205);
+			XDrawLine(display, window, gc_black_text, 806 + width, 175, 806 + width, 205);
 		} else if (strcmp(focus, "nom") == 0) {
-			XDrawLine(display, window, gc_black_text, 805, 375, 805, 405);
-			XDrawLine(display, window, gc_black_text, 806, 375, 806, 405);
+			int width = XTextWidth(XQueryFont(display, big_font), nom, input_text_index);
+
+			XDrawLine(display, window, gc_black_text, 805 + width, 375, 805 + width, 405);
+			XDrawLine(display, window, gc_black_text, 806 + width, 375, 806 + width, 405);
 		} else if (strcmp(focus, "style") == 0) {
-			XDrawLine(display, window, gc_black_text, 805, 575, 805, 605);
-			XDrawLine(display, window, gc_black_text, 806, 575, 806, 605);
+			int width = XTextWidth(XQueryFont(display, big_font), style, input_text_index);
+
+			XDrawLine(display, window, gc_black_text, 805 + width, 575, 805 + width, 605);
+			XDrawLine(display, window, gc_black_text, 806 + width, 575, 806 + width, 605);
 		}
 	}
+}
 
-	if (blink_index == 100000) {
-		blink_index = 0;
-	} else {
-		blink_index++;
+void xadd_handle_key_press(XKeyEvent event) {
+	KeySym keysym = XLookupKeysym(&event, 0);
+	char *keytext = XKeysymToString(keysym);
+
+	add_updated = 1;
+
+	if (focus != NULL) {
+		if (strlen(keytext) == 1) {
+			if (strcmp(focus, "prenom") == 0) {
+				if (input_text_index == strlen(prenom)) {
+					strcat(prenom, keytext);
+				} else {
+					char *tmp = calloc(strlen(prenom) + 2, sizeof(char));
+					strncpy(tmp, prenom, input_text_index);
+					tmp[strlen(tmp)] = '\0';
+					strcat(tmp, keytext);
+					strcat(tmp, prenom + input_text_index);
+
+					strcpy(prenom, tmp);
+					free(tmp);
+				}
+			} else if (strcmp(focus, "nom") == 0) {
+				if (input_text_index == strlen(nom)) {
+					strcat(nom, keytext);
+				} else {
+					char *tmp = calloc(strlen(nom) + 2, sizeof(char));
+					strncpy(tmp, nom, input_text_index);
+					tmp[strlen(tmp)] = '\0';
+					strcat(tmp, keytext);
+					strcat(tmp, nom + input_text_index);
+
+					strcpy(nom, tmp);
+					free(tmp);
+				}
+			} else if (strcmp(focus, "style") == 0) {
+				if (input_text_index == strlen(style)) {
+					strcat(style, keytext);
+				} else {
+					char *tmp = calloc(strlen(style) + 2, sizeof(char));
+					strncpy(tmp, style, input_text_index);
+					tmp[strlen(tmp)] = '\0';
+					strcat(tmp, keytext);
+					strcat(tmp, style + input_text_index);
+
+					strcpy(style, tmp);
+					free(tmp);
+				}
+			}
+
+			input_text_index++;
+		} else if (strcmp(keytext, "BackSpace") == 0) {
+			if (strcmp(focus, "prenom") == 0) {
+				prenom[strlen(prenom) - 1] = '\0';
+
+				if (input_text_index > strlen(prenom)) {
+					input_text_index = strlen(prenom);
+				}
+			} else if (strcmp(focus, "nom") == 0) {
+				nom[strlen(nom) - 1] = '\0';
+
+				if (input_text_index > strlen(nom)) {
+					input_text_index = strlen(nom);
+				}
+			} else if (strcmp(focus, "style") == 0) {
+				style[strlen(style) - 1] = '\0';
+
+				if (input_text_index > strlen(style)) {
+					input_text_index = strlen(style);
+				}
+			}
+		} else if (strcmp(keytext, "Left") == 0) {
+			if (input_text_index > 0) {
+				input_text_index--;
+			}
+		} else if (strcmp(keytext, "Right") == 0) {
+			if (strcmp(focus, "prenom") == 0) {
+				if (input_text_index < strlen(prenom)) {
+					input_text_index++;
+				}
+			} else if (strcmp(focus, "nom") == 0) {
+				if (input_text_index < strlen(nom)) {
+					input_text_index++;
+				}
+			} else if (strcmp(focus, "style") == 0) {
+				if (input_text_index < strlen(style)) {
+					input_text_index++;
+				}
+			}
+		}
 	}
 }

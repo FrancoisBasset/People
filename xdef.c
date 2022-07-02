@@ -22,10 +22,13 @@ GC gc_white_text;
 GC gc_black_text;
 
 char *font_name = "-misc-fixed-bold-r-normal--18-120-100-100-c-90-iso8859-13";
-char *font_name2 = "-adobe-helvetica-bold-r-normal--34-240-100-100-p-182-iso10646-1";
+char *big_font_name = "-adobe-helvetica-bold-r-normal--34-240-100-100-p-182-iso10646-1";
 
 Cursor cursor;
 Cursor input_cursor;
+
+Font font;
+Font big_font;
 
 void xdef_init(void) {
 	display = XOpenDisplay(0);
@@ -57,8 +60,8 @@ void xdef_init(void) {
 	gcv_button.foreground = green_pixel;
 	gc_button = XCreateGC(display, window, GCForeground, &gcv_button);
 
-	Font font = XLoadFont(display, font_name);
-	Font font2 = XLoadFont(display, font_name2);
+	font = XLoadFont(display, font_name);
+	big_font = XLoadFont(display, big_font_name);
 
 	XGCValues gcv_white_text;
     gcv_white_text.foreground = white_pixel;
@@ -67,7 +70,7 @@ void xdef_init(void) {
 
 	XGCValues gcv_black_text;
     gcv_black_text.foreground = black_pixel;
-	gcv_black_text.font = font2;
+	gcv_black_text.font = big_font;
     gc_black_text = XCreateGC(display, window, GCForeground | GCFont, &gcv_black_text);
 
 	input_cursor = XCreateFontCursor(display, XC_xterm);

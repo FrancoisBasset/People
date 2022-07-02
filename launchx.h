@@ -16,9 +16,9 @@ extern char *hover;
 extern char *focus;
 
 extern char add_updated;
-extern int blink_updated;
-extern int blink_index;
 extern char *prenom;
 extern char *nom;
 extern char *style;
+
+extern int input_text_index;
 #endif
