@@ -3,7 +3,7 @@
 #include <string.h>
 #include "xdef.h"
 #include "launchx.h"
-#include <stdio.h>
+#include "people.h"
 
 int xadd_handle_motion(int x, int y) {
 	if (x >= 800 && x <= 1200 && y >= 165 && y <= 215) {
@@ -20,6 +20,9 @@ int xadd_handle_motion(int x, int y) {
 		XDefineCursor(display, window, input_cursor);
 		hover = malloc(sizeof(char) * 6);
 		strcpy(hover, "style");
+		return 1;
+	} else if (x >= 900 && x <= 1100 && y >= 700 && y <= 800) {
+		XDefineCursor(display, window, cursor);
 		return 1;
 	} else {
 		free(hover);
@@ -46,6 +49,15 @@ void xadd_handle_press(int x, int y) {
 	} else {
 		free(focus);
 		focus = NULL;
+	}
+
+	if (x >= 900 && x <= 1100 && y >= 700 && y <= 800) {
+		struct people new_people = { .firstname = prenom, .lastname = nom, .style = style };
+		people_add(new_people);
+
+		strcpy(prenom, "");
+		strcpy(nom, "");
+		strcpy(style, "");
 	}
 }
 

@@ -28,11 +28,11 @@ void launchx(void) {
 	strcpy(scr, "");
 
 	prenom = malloc(sizeof(char) * 100);
-	strcpy(prenom, "Francois");
+	strcpy(prenom, "");
 	nom = malloc(sizeof(char) * 100);
-	strcpy(nom, "Basset");
+	strcpy(nom, "");
 	style = malloc(sizeof(char) * 100);
-	strcpy(style, "Trance");
+	strcpy(style, "");
 
 	int quit = 0;
 	xmenu_draw_buttons();
