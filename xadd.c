@@ -4,6 +4,21 @@
 #include "xdef.h"
 #include "launchx.h"
 #include "people.h"
+#include <stdio.h>
+
+char *prenom;
+char *nom;
+char *style;
+char add_updated = 1;
+
+void xadd_init(void) {
+	prenom = malloc(sizeof(char) * 100);
+	strcpy(prenom, "");
+	nom = malloc(sizeof(char) * 100);
+	strcpy(nom, "");
+	style = malloc(sizeof(char) * 100);
+	strcpy(style, "");
+}
 
 int xadd_handle_motion(int x, int y) {
 	if (x >= 800 && x <= 1200 && y >= 165 && y <= 215) {
@@ -99,6 +114,15 @@ void xadd_handle_refresh(void) {
 void xadd_handle_key_press(XKeyEvent event) {
 	KeySym keysym = XLookupKeysym(&event, 0);
 	char *keytext = XKeysymToString(keysym);
+
+	if ((event.state & ShiftMask) == ShiftMask) {
+		if (strlen(keytext) == 1) {
+			int keycode = keytext[0] - 32;
+
+			keytext = malloc(sizeof(char) * 2);
+			sprintf(keytext, "%c", keycode);
+		}
+	}
 
 	add_updated = 1;
 

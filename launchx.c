@@ -10,15 +10,12 @@
 char *scr;
 char* hover = NULL;
 char *focus = NULL;
-char *prenom;
-char *nom;
-char *style;
 
-char add_updated = 1;
 int input_text_index = 0;
 
 void launchx(void) {
 	xdef_init();
+	xadd_init();
 
 	XMapWindow(display, window);
 	XSelectInput(display, window, ExposureMask | ButtonPressMask | PointerMotionMask | KeyPressMask);
@@ -26,13 +23,6 @@ void launchx(void) {
 
 	scr = malloc(sizeof(char) * 1);
 	strcpy(scr, "");
-
-	prenom = malloc(sizeof(char) * 100);
-	strcpy(prenom, "");
-	nom = malloc(sizeof(char) * 100);
-	strcpy(nom, "");
-	style = malloc(sizeof(char) * 100);
-	strcpy(style, "");
 
 	int quit = 0;
 	xmenu_draw_buttons();
@@ -71,6 +61,7 @@ void launchx(void) {
 	XFreeGC(display, gc_black_text);
 	XFreeCursor(display, cursor);
 	XFreeCursor(display, input_cursor);
+	XSetInputFocus(display, PointerRoot, RevertToParent, CurrentTime);
 	XCloseDisplay(display);
 }
 

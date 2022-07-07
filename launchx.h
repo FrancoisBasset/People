@@ -15,10 +15,5 @@ void delete_people(void);
 extern char *hover;
 extern char *focus;
 
-extern char add_updated;
-extern char *prenom;
-extern char *nom;
-extern char *style;
-
 extern int input_text_index;
 #endif
