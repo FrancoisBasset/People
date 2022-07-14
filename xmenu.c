@@ -1,6 +1,8 @@
 #include <X11/Xlib.h>
 #include "launchx.h"
 #include "xdef.h"
+#include "xlist.h"
+#include "xadd.h"
 
 void xmenu_draw_buttons(void) {
 	XFillRectangle(display, window, gc_button, 50, 50, 200, 100);
@@ -43,11 +45,11 @@ int xmenu_handle_motion(int x, int y) {
 
 int xmenu_handle_press(int x, int y) {
 	if (x >= 50 && x <= 250 && y >= 50 && y <= 150) {
-		list_people();
+		xlist_init();
 	} else if (x >= 50 && x <= 250 && y >= 200 && y <= 300) {
 		show_people();
 	} else if (x >= 50 && x <= 250 && y >= 350 && y <= 450) {
-		add_people();
+		xadd_init();
 	} else if (x >= 50 && x <= 250 && y >= 500 && y <= 600) {
 		delete_people();
 	} else if (x >= 50 && x <= 250 && y >= 650 && y <= 750) {

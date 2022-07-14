@@ -6,6 +6,7 @@
 #include "xdef.h"
 #include "xmenu.h"
 #include "xadd.h"
+#include "xlist.h"
 
 char *scr;
 char* hover = NULL;
@@ -15,7 +16,6 @@ int input_text_index = 0;
 
 void launchx(void) {
 	xdef_init();
-	xadd_init();
 
 	XMapWindow(display, window);
 	XSelectInput(display, window, ExposureMask | ButtonPressMask | PointerMotionMask | KeyPressMask);
@@ -85,6 +85,12 @@ void handle_motion(int x, int y) {
 		}
 	}
 
+	if (strcmp(scr, "listscreen") == 0) {
+		if (xlist_handle_motion(x, y)) {
+			return;
+		}
+	}
+
 	if (xmenu_handle_motion(x, y)) {
 		return;
 	}
@@ -94,28 +100,6 @@ void list_people(void) {
 }
 
 void show_people(void) {
-}
-
-void add_people(void) {
-	if (scr != NULL) {
-		free(scr);
-		scr = NULL;
-	}
-	scr = malloc(sizeof(char) * 10);
-	strcpy(scr, "addscreen");
-	XDrawString(display, window, gc_black_text, 1000, 100, "Ajouter une personne", 20);
-
-	XDrawString(display, window, gc_black_text, 600, 200, "Prenom : ", 9);
-	XDrawRectangle(display, window, gc_black_text, 800, 165, 400, 50);
-
-	XDrawString(display, window, gc_black_text, 600, 400, "Nom : ", 5);
-	XDrawRectangle(display, window, gc_black_text, 800, 365, 400, 50);
-	
-	XDrawString(display, window, gc_black_text, 600, 600, "Style : ", 7);
-	XDrawRectangle(display, window, gc_black_text, 800, 565, 400, 50);
-
-	XFillRectangle(display, window, gc_button, 900, 700, 200, 100);
-	XDrawString(display, window, gc_white_text, 970, 755, "Ajouter", 7);
 }
 
 void delete_people(void) {

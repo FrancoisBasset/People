@@ -12,6 +12,7 @@ void show_people(void);
 void add_people(void);
 void delete_people(void);
 
+extern char *scr;
 extern char *hover;
 extern char *focus;
 
