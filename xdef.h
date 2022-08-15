@@ -8,6 +8,7 @@ extern Window window;
 extern GC gc_button;
 extern GC gc_white_text;
 extern GC gc_black_text;
+extern GC gc_normal_black_text;
 
 extern Cursor cursor;
 extern Cursor input_cursor;

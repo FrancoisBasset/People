@@ -28,7 +28,7 @@ pkg: main
 	dpkg-deb --build ./package people.deb
 
 start: main
-	startx ./build/people -gui
+	./build/people -gui
 
 install:
 	cp build/people /usr/bin/people

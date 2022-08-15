@@ -5,6 +5,8 @@
 #include "launchx.h"
 #include "xlist.h"
 
+#include <unistd.h>
+
 void xlist_init(void) {
 	if (scr != NULL) {
 		free(scr);
@@ -23,9 +25,9 @@ void xlist_init(void) {
 	XDrawLine(display, window, gc_black_text, 980, 210, 1080, 210);
 	XDrawLine(display, window, gc_black_text, 975, 175, 975, 205);
 	XDrawLine(display, window, gc_black_text, 1085, 175, 1085, 205);
+
 	XDrawArc(display, window, gc_black_text, 975, 170, 10, 10, 90 * 64, 90 * 64);
 	XDrawArc(display, window, gc_black_text, 1075, 170, 10, 10, 0 * 64, 90 * 64);
-
 	XDrawArc(display, window, gc_black_text, 975, 200, 10, 10, 180 * 64, 90 * 64);
 	XDrawArc(display, window, gc_black_text, 1075, 200, 10, 10, 270 * 64, 90 * 64);
 
@@ -42,6 +44,20 @@ void xlist_init(void) {
 			end_pixel--;
 		}
 	}
+
+	XDrawRectangle(display, window, gc_black_text, 700, 250, 700, 400);
+	XDrawLine(display, window, gc_black_text, 770, 250, 770, 650);
+	XDrawLine(display, window, gc_black_text, 970, 250, 970, 650);
+	XDrawLine(display, window, gc_black_text, 1200, 250, 1200, 650);
+	XDrawLine(display, window, gc_black_text, 1400, 250, 1400, 650);
+
+	XDrawString(display, window, gc_normal_black_text, 725, 265, "ID", 2);
+	XDrawString(display, window, gc_normal_black_text, 845, 265, "Prenom", 6);
+	XDrawString(display, window, gc_normal_black_text, 1070, 265, "Nom", 3);
+	XDrawString(display, window, gc_normal_black_text, 1280, 265, "Style", 5);
+
+
+	XDrawLine(display, window, gc_black_text, 700, 270, 1400, 270);
 }
 
 int xlist_handle_motion(int x, int y) {

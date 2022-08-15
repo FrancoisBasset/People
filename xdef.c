@@ -20,6 +20,7 @@ int max_height;
 GC gc_button;
 GC gc_white_text;
 GC gc_black_text;
+GC gc_normal_black_text;
 
 char *font_name = "-misc-fixed-bold-r-normal--18-120-100-100-c-90-iso8859-13";
 char *big_font_name = "-adobe-helvetica-bold-r-normal--34-240-100-100-p-182-iso10646-1";
@@ -72,6 +73,11 @@ void xdef_init(void) {
     gcv_black_text.foreground = black_pixel;
 	gcv_black_text.font = big_font;
     gc_black_text = XCreateGC(display, window, GCForeground | GCFont, &gcv_black_text);
+	
+	XGCValues gcv_normal_black_text;
+    gcv_normal_black_text.foreground = black_pixel;
+	gcv_normal_black_text.font = font;
+    gc_normal_black_text = XCreateGC(display, window, GCForeground | GCFont, &gcv_normal_black_text);
 
 	input_cursor = XCreateFontCursor(display, XC_xterm);
 }
